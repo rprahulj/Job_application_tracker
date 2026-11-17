@@ -1,67 +1,44 @@
 # Job Application Tracker API
 
-A RESTful backend application built using **Python, Django, Django REST Framework, SQLite, and JWT Authentication** to help users manage their job applications, interviews, notes, and reminders in one place.
+## About the Project
 
-The project focuses on secure API development, user-level data isolation, database optimisation, and automated email reminders.
+Job Application Tracker is a REST API developed using Python, Django, and Django REST Framework.
 
-## 🚀 Features
+This project helps users manage their job applications in one place. Users can add job applications, track their application status, manage interviews, write notes, and set reminders.
 
-- **JWT Authentication:** Secure user registration, login, and token refresh.
-- **Job Application Management:** Create, retrieve, update, and delete job applications.
-- **Interview Management:** Schedule interviews and maintain interview details.
-- **Notes Management:** Maintain notes associated with job applications.
-- **Email Reminders:** Schedule reminders and send automated email notifications.
-- **Statistics Dashboard:** View application statistics grouped by status and week.
-- **Filtering:** Filter applications by status and company.
-- **Full-Text Search:** Search applications by company, role, location, and description.
-- **Sorting:** Sort records by application date, company, and update date.
-- **Pagination:** Paginate API responses to handle larger datasets.
-- **Data Isolation:** Ensure users can access only their own records.
-- **Database Optimisation:** Use composite indexes and database-level aggregation.
+The API uses JWT authentication to secure user accounts and ensure that users can access only their own data.
 
-## 🛠️ Technology Stack
+## Technologies Used
 
-| Technology | Purpose |
-|---|---|
-| Python | Programming language |
-| Django | Backend framework |
-| Django REST Framework | REST API development |
-| SQLite | Relational database |
-| Django ORM | Database operations |
-| Simple JWT | Authentication |
-| Django Management Commands | Scheduled email reminders |
+- Python
+- Django
+- Django REST Framework
+- SQLite
+- Django ORM
+- JWT Authentication
 
-## 🏗️ Project Architecture
+## Features
 
-```text
-Client (Postman / Frontend)
-          |
-          v
-    REST API Routes
-          |
-          v
-   JWT Authentication
-          |
-          v
- Django REST Framework
-          |
-          v
-   Views & Serializers
-          |
-          v
-       Django ORM
-          |
-          v
-      SQLite Database
-```
+- User registration and login.
+- Secure authentication using JWT tokens.
+- Add, view, update, and delete job applications.
+- Manage interview details and schedules.
+- Add and manage notes for each application.
+- Create reminders for important activities.
+- Send email reminders automatically.
+- View application statistics.
+- Filter applications by status and company.
+- Search applications by company, role, location, and description.
+- Sort application records.
+- Pagination for application lists.
+- Secure data access for individual users.
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 job_application_tracker/
 │
-├── tracker/
-│   ├── __init__.py
+├── job_application_tracker/
 │   ├── settings.py
 │   ├── urls.py
 │   ├── asgi.py
@@ -71,7 +48,6 @@ job_application_tracker/
 │   ├── management/
 │   │   └── commands/
 │   │       └── send_due_reminders.py
-│   ├── migrations/
 │   ├── models.py
 │   ├── serializers.py
 │   ├── permissions.py
@@ -85,12 +61,13 @@ job_application_tracker/
 └── .gitignore
 ```
 
-## 🗄️ Database Design
+## Database Models
 
-The application uses four main domain models.
+The project uses four main database models.
 
 ### 1. Application
-Stores job application information.
+
+Stores information about job applications.
 
 - Company name
 - Job role
@@ -99,280 +76,246 @@ Stores job application information.
 - Job URL
 - Application status
 - Application date
-- Created and updated timestamps
 
 ### 2. Interview
-Stores interview information associated with an application.
+
+Stores interview-related information.
 
 - Interview date and time
 - Interview type
-- Interviewer
-- Meeting link or location
-- Interview outcome
+- Interviewer name
+- Meeting link
+- Interview result
 
 ### 3. Note
-Stores personal notes associated with an application.
+
+Stores personal notes related to job applications.
 
 - Note content
-- Created timestamp
-- Updated timestamp
+- Created date
+- Updated date
 
 ### 4. Reminder
+
 Stores reminder information.
 
 - Reminder date and time
 - Reminder message
-- Email delivery timestamp
+- Email sent status
 
 ### Database Relationships
 
-```text
-User
- |
- | 1-to-Many
- |
-Application
- |
- |------ Interview (1-to-Many)
- |
- |------ Note (1-to-Many)
- |
- |------ Reminder (1-to-Many)
-```
+- One user can have multiple job applications.
+- One application can have multiple interviews.
+- One application can have multiple notes.
+- One application can have multiple reminders.
 
-Each application belongs to one user. Interviews, notes, and reminders belong to an application.
+## API Endpoints
 
-## 🔐 Authentication and Security
-
-The API uses JSON Web Token (JWT) authentication through `djangorestframework-simplejwt`.
-
-### Authentication Flow
-
-1. User registers an account.
-2. User logs in using username and password.
-3. Server generates access and refresh tokens.
-4. Client sends the access token with protected API requests.
-5. Server validates the token and identifies the authenticated user.
-
-Example authorisation header:
-
-```http
-Authorisation: Bearer <access_token>
-```
-
-### Per-User Data Isolation
-
-Data isolation is implemented at the backend level.
-
-- Every application queryset is filtered using `request.user`.
-- Ownership is assigned using the authenticated user, not a user ID supplied in the request body.
-- Related-object IDs are validated against the logged-in user's applications.
-- Users cannot retrieve or modify another user's records through manipulated IDs.
-
-This protects the application against insecure direct object reference (IDOR) vulnerabilities.
-
-## 📡 API Documentation
-
-The project provides **28 functional HTTP operations across 12 URL patterns**, excluding the automatically generated API root.
+The project contains 28 functional API operations.
 
 ### Authentication APIs
 
 | Method | Endpoint | Description |
 |---|---|---|
 | POST | `/api/register/` | Register a new user |
-| POST | `/api/token/` | Login and obtain JWT tokens |
+| POST | `/api/token/` | Login and get JWT tokens |
 | POST | `/api/token/refresh/` | Refresh access token |
 
 ### Application APIs
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/applications/` | List applications |
-| POST | `/api/applications/` | Create application |
-| GET | `/api/applications/{id}/` | Retrieve application |
-| PUT | `/api/applications/{id}/` | Replace application |
-| PATCH | `/api/applications/{id}/` | Partially update application |
-| DELETE | `/api/applications/{id}/` | Delete application |
+| GET | `/api/applications/` | Get all applications |
+| POST | `/api/applications/` | Add a new application |
+| GET | `/api/applications/{id}/` | Get application details |
+| PUT | `/api/applications/{id}/` | Update an application |
+| PATCH | `/api/applications/{id}/` | Update selected fields |
+| DELETE | `/api/applications/{id}/` | Delete an application |
 
 ### Interview APIs
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/interviews/` | List interviews |
-| POST | `/api/interviews/` | Create interview |
-| GET | `/api/interviews/{id}/` | Retrieve interview |
-| PUT | `/api/interviews/{id}/` | Replace interview |
-| PATCH | `/api/interviews/{id}/` | Partially update interview |
-| DELETE | `/api/interviews/{id}/` | Delete interview |
+| GET | `/api/interviews/` | Get all interviews |
+| POST | `/api/interviews/` | Add an interview |
+| GET | `/api/interviews/{id}/` | Get interview details |
+| PUT | `/api/interviews/{id}/` | Update an interview |
+| PATCH | `/api/interviews/{id}/` | Update selected fields |
+| DELETE | `/api/interviews/{id}/` | Delete an interview |
 
 ### Notes APIs
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/notes/` | List notes |
-| POST | `/api/notes/` | Create note |
-| GET | `/api/notes/{id}/` | Retrieve note |
-| PUT | `/api/notes/{id}/` | Replace note |
-| PATCH | `/api/notes/{id}/` | Partially update note |
-| DELETE | `/api/notes/{id}/` | Delete note |
+| GET | `/api/notes/` | Get all notes |
+| POST | `/api/notes/` | Add a new note |
+| GET | `/api/notes/{id}/` | Get note details |
+| PUT | `/api/notes/{id}/` | Update a note |
+| PATCH | `/api/notes/{id}/` | Update selected fields |
+| DELETE | `/api/notes/{id}/` | Delete a note |
 
 ### Reminder APIs
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/reminders/` | List reminders |
-| POST | `/api/reminders/` | Create reminder |
-| GET | `/api/reminders/{id}/` | Retrieve reminder |
-| PUT | `/api/reminders/{id}/` | Replace reminder |
-| PATCH | `/api/reminders/{id}/` | Partially update reminder |
-| DELETE | `/api/reminders/{id}/` | Delete reminder |
+| GET | `/api/reminders/` | Get all reminders |
+| POST | `/api/reminders/` | Add a reminder |
+| GET | `/api/reminders/{id}/` | Get reminder details |
+| PUT | `/api/reminders/{id}/` | Update a reminder |
+| PATCH | `/api/reminders/{id}/` | Update selected fields |
+| DELETE | `/api/reminders/{id}/` | Delete a reminder |
 
 ### Statistics API
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/stats/` | Retrieve application statistics |
+| GET | `/api/stats/` | Get application statistics |
 
-## 🔎 Filtering, Searching and Pagination
+## User Authentication and Data Security
 
-Application listing supports multiple query parameters.
+The project uses JWT authentication to protect API endpoints.
 
-Example:
+The authentication process works as follows:
 
-```http
-GET /api/applications/?status=interview&company=Google&search=python&ordering=-applied_at&page=1
+1. A user registers an account.
+2. The user logs in with a username and password.
+3. The server generates access and refresh tokens.
+4. The user sends the access token with API requests.
+5. The server verifies the token before allowing access.
+
+### How User Data Is Protected
+
+- Every user's application list is filtered using the logged-in user.
+- The server assigns record ownership automatically.
+- Users cannot access another user's applications.
+- Interview, note, and reminder records are checked against application ownership.
+- Users cannot create related records using another user's application ID.
+
+This ensures that each user can access only their own information.
+
+## Search, Filtering and Sorting
+
+The application list supports searching, filtering, and sorting.
+
+Example request:
+
+```text
+/api/applications/?status=interview&company=Google&search=python&ordering=-applied_at&page=1
 ```
 
-Supported parameters:
+Available options:
 
-| Parameter | Description |
-|---|---|
-| `status` | Filter by application status |
-| `company` | Filter by company name |
-| `search` | Search across configured text fields |
-| `ordering` | Sort results |
-| `page` | Select pagination page |
+- Status: Filter applications by status.
+- Company: Search by company name.
+- Search: Search by role, company, location, or description.
+- Ordering: Sort applications by date, company, or update time.
+- Page: Get a particular page of results.
 
-## 📊 Statistics and Database Aggregation
+## Application Statistics
 
-The statistics endpoint provides:
+The statistics API provides information about job applications.
+
+It includes:
 
 - Total number of applications.
-- Application counts grouped by status.
-- Weekly application counts.
+- Number of applications in each status.
+- Number of applications submitted each week.
 
-Django ORM aggregation is used to perform calculations at the database level.
+The project uses Django ORM functions such as `Count()`, `values()`, `annotate()`, and `TruncWeek()` to calculate statistics directly in the database.
 
-Important ORM functions:
+## Automated Email Reminders
 
-- `Count()` – Count database records.
-- `values()` – Group records by selected fields.
-- `annotate()` – Calculate aggregated values.
-- `TruncWeek()` – Group dates by week.
+The project includes a Django management command to send reminder emails.
 
-## 📧 Automated Email Reminders
-
-The project includes a custom Django management command:
+Command:
 
 ```bash
 python manage.py send_due_reminders
 ```
 
-The command:
+How it works:
 
-1. Finds reminders whose due date has passed.
-2. Skips reminders already marked as sent.
-3. Sends an email to the application owner's email address.
-4. Updates the `sent_at` field after successful email delivery.
+1. The command finds reminders whose scheduled time has passed.
+2. It checks whether the reminder has already been sent.
+3. It sends an email to the user.
+4. It updates the sent date after successful email delivery.
 
-For automatic execution, schedule this command using:
+The command can be scheduled to run automatically using Cron or Windows Task Scheduler.
 
-- Linux Cron
-- Windows Task Scheduler
+## Installation and Setup
 
-The implementation prevents repeated sends during normal sequential runs. Production-grade exactly-once delivery requires additional handling, such as a transactional outbox and an idempotent email provider.
+Follow these steps to run the project on your computer.
 
-## ⚙️ Installation and Setup
-
-### 1. Clone the Repository
+### Step 1: Clone the Repository
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/job-application-tracker.git
 ```
 
+### Step 2: Open the Project Folder
+
 ```bash
 cd job-application-tracker
 ```
 
-### 2. Create a Virtual Environment
+### Step 3: Create a Virtual Environment
 
 ```bash
 python -m venv venv
 ```
 
-Activate it:
+Activate the environment.
 
-**Windows**
+For Windows:
 
 ```bash
 venv\Scripts\activate
 ```
 
-**Linux / macOS**
+For Linux or macOS:
 
 ```bash
 source venv/bin/activate
 ```
 
-### 3. Install Dependencies
+### Step 4: Install Required Packages
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Apply Database Migrations
+### Step 5: Create Database Tables
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 5. Create a Superuser
+### Step 6: Create Admin Account
 
 ```bash
 python manage.py createsuperuser
 ```
 
-### 6. Start Development Server
+### Step 7: Run the Development Server
 
 ```bash
 python manage.py runserver
 ```
 
-The API will be available at:
+The project will be available at:
 
 ```text
 http://127.0.0.1:8000/
 ```
 
-## 🧪 Testing
+## Testing
 
-Run the test suite:
+To run the available test cases:
 
 ```bash
 python manage.py test
 ```
 
-The included tests cover important ownership scenarios, including:
-
-- Listing only the authenticated user's applications.
-- Preventing access to another user's application.
-- Preventing creation of related records against another user's application.
-
-Additional CRUD, authentication, and concurrent reminder tests can be added as the project evolves.
-
-
-
----
-
-⭐ If you find this project useful, consider giving it a star!
+The included tests check user data isolation and prevent users from accessing applications owned by other users.
